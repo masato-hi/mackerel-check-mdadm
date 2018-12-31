@@ -1,0 +1,1 @@
+# mackerel-check-mdadm

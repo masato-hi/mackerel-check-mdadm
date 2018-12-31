@@ -8,12 +8,12 @@ check() {
   cat /proc/mdstat
 
   for dev in $(ls /dev/md*); do
-    detail="$(mdadm --detail ${dev})"
+    local detail="$(mdadm --detail ${dev})"
 
-    degraded=$(echo "${detail}" | grep 'State : ' | grep degraded | wc -l)
-    failed=$(echo "${detail}" | grep 'State : ' | grep FAILED | wc -l)
+    local degraded=$(echo "${detail}" | grep 'State : ' | grep degraded | wc -l)
+    local failed=$(echo "${detail}" | grep 'State : ' | grep FAILED | wc -l)
 
-    failed_dev=$(echo "${detail}" | grep 'Failed Devices : ' | awk '{print $4}')
+    local failed_dev=$(echo "${detail}" | grep 'Failed Devices : ' | awk '{print $4}')
 
     if [ $failed -gt 0 -o $degraded -gt 0 ]; then
       exit $CRIT

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+OK=0
+WARN=1
+CRIT=2
+
+check() {
+  cat /proc/mdstat
+
+  for dev in $(ls /dev/md*); do
+    detail="$(mdadm --detail ${dev})"
+
+    degraded=$(echo "${detail}" | grep 'State : ' | grep degraded | wc -l)
+    failed=$(echo "${detail}" | grep 'State : ' | grep FAILED | wc -l)
+
+    failed_dev=$(echo "${detail}" | grep 'Failed Devices : ' | awk '{print $4}')
+
+    if [ $failed -gt 0 -o $degraded -gt 0 ]; then
+      exit $CRIT
+    elif [ $failed_dev -gt 0 ]; then
+      exit $WARN
+    fi
+  done
+
+  exit $OK
+}
+
+check
+
